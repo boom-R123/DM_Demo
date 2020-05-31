@@ -31,7 +31,8 @@ public class S1 extends HttpServlet {
             pw.close();
         }
         if(action.equals("DrawArea")){
-            JSONObject data = JsonRW.readJson("D:/testdata/result11.json");
+            String file=request.getParameter("file");
+            JSONObject data = JsonRW.readJson("D:/testdata/"+file+".json");
             System.out.println(data);
             PrintWriter pw = response.getWriter();
             pw.print(data);

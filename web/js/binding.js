@@ -6,16 +6,18 @@ function btmBindMain() {  //给按钮绑定函数
     $("#btm_play").attr("IsMove",0);//设置一个属性用于判定是否在运行动画,0表示没有，1表示有
 }
 
-function btm_ShowTrack() {
-    $("#btm_play").show();
-    DrawMoveMarker();
+function btm_ShowTrack(){
+    $("#btm_play").hide();
+    DrawPoiArea();
     CreateTable();
 }
+
 function btm_ReDrawMap() {
     $("#btm_play").hide();
     $("#cluster_table").empty();
     InitMap();
 }
+
 function btm_play() {
     play();
     if($("#btm_play").attr("IsMove")==0){

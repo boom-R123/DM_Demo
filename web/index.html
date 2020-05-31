@@ -52,7 +52,13 @@
 
 <!--                    </ul>-->
                     <form class="navbar-form navbar-left" style="margin-left: -10px">
-                        选择时间段:
+                        &nbsp;选择POI类别:
+                        <select class="form-control" id="select_type">
+                            <option>餐饮</option>
+                            <option>购物</option>
+                            <option>娱乐</option>
+                        </select>
+                        &nbsp;&nbsp;&nbsp;选择时间段:
                         <select class="form-control" id="select_time">
                             <option>2012年11月01日  &nbsp;06:00-07:00期间</option>
                             <option>2012年11月01日  &nbsp;07:00-08:00期间</option>
@@ -67,10 +73,6 @@
                             <option>2012年11月01日  &nbsp;16:00-17:00期间</option>
                             <option>2012年11月01日  &nbsp;17:00-18:00期间</option>
                         </select>
-                        <div class="form-group">
-                           &nbsp;&nbsp;输入阈值: <input type="text" class="form-control" placeholder="热点区域阈值"
-                                                    style="width: 110px" id="input_value">
-                        </div>
                         &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-success" id="btm_ShowTrack" >显 示</button>
                     </form>
 
