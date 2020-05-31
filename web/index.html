@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Mining System</title>
+    <!--外部-->
+    <link href="external/leaflet/leaflet.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="external/bootstrap-3.3.7-dist/css/bootstrap.min.css"/>
+    <!--内部-->
+    <link href="style/frame1.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="div_frame" id="div_frame">
+
+    <div class="div_title" id="div_title">
+        <p class="title">Mining System</p>
+    </div>
+
+    <div class="div_left" id="div_left">
+
+        <div class="div_map" id="div_map">
+            <div class="div_fill" id="div_fill"></div>
+        </div>
+        <button type="button" class="btn btn-default play" id="btm_play" style="display: none">
+            <span class="glyphicon glyphicon-play" aria-hidden="true">play</span>
+        </button>
+    </div>
+
+    <div class="div_right" id="div_right">
+
+        <nav class="navbar navbar-default">
+
+            <div class="container-fluid" style="padding-right: 0px">
+
+                <div class="navbar-header" style="background: white">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" style="background: rgba(250,250,250,.5);" href="#" id="btm_ReDrawMap" ><span
+                            class="glyphicon glyphicon-home"></span></a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="background: white;">
+<!--                    <ul class="nav navbar-nav">-->
+<!--                        <li><a href="#" id="btm_ShowTrack">显示结果</a></li>-->
+<!--                        &lt;!&ndash;                        <li><a href="#">重绘地图</a></li>&ndash;&gt;-->
+
+<!--                    </ul>-->
+                    <form class="navbar-form navbar-left" style="margin-left: -10px">
+                        选择时间段:
+                        <select class="form-control" id="select_time">
+                            <option>2012年11月01日  &nbsp;06:00-07:00期间</option>
+                            <option>2012年11月01日  &nbsp;07:00-08:00期间</option>
+                            <option>2012年11月01日  &nbsp;08:00-09:00期间</option>
+                            <option>2012年11月01日  &nbsp;09:00-10:00期间</option>
+                            <option>2012年11月01日  &nbsp;10:00-11:00期间</option>
+                            <option>2012年11月01日  &nbsp;11:00-12:00期间</option>
+                            <option>2012年11月01日  &nbsp;12:00-13:00期间</option>
+                            <option>2012年11月01日  &nbsp;13:00-14:00期间</option>
+                            <option>2012年11月01日  &nbsp;14:00-15:00期间</option>
+                            <option>2012年11月01日  &nbsp;15:00-16:00期间</option>
+                            <option>2012年11月01日  &nbsp;16:00-17:00期间</option>
+                            <option>2012年11月01日  &nbsp;17:00-18:00期间</option>
+                        </select>
+                        <div class="form-group">
+                           &nbsp;&nbsp;输入阈值: <input type="text" class="form-control" placeholder="热点区域阈值"
+                                                    style="width: 110px" id="input_value">
+                        </div>
+                        &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-success" id="btm_ShowTrack" >显 示</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </nav>
+
+        <table class="table table-bordered table_cluster" id="cluster_table">
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+<!--外部js-->
+<script src="external/jquery/jquery-3.2.0.min.js"></script>
+<script src="external/leaflet/leaflet.js"></script>
+<script src="external/leaflet_MoveMarker/MovingMarker.js"></script>
+<script src="external/bootstrap-3.3.7-dist/js/bootstrap.min.js" charset="UTF-8"></script>
+<!--内部js-->
+<script src="js/binding.js" charset="UTF-8"></script>
+<script src="js/function.js" charset="UTF-8"></script>
+<script src="js/init.js" charset="UTF-8"></script>
+</body>
+
+</html>
