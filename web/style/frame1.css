@@ -18,7 +18,7 @@ body {
 .div_frame{
     margin: 0px auto;
     height: 721px;
-    width: 90%;
+    width: 95%;
     background-color: #ffffff;
     border:1px solid #dcfff7;
     border-bottom: 2px solid black;
@@ -41,8 +41,8 @@ body {
 }
 
 .div_frame .div_left{
-    height:87%;
-    width: 50%;
+    height:100%;
+    width: 52%;
     border:1px solid #040404;
     float: left;
     position: relative;
@@ -56,8 +56,8 @@ body {
 }
 
 .div_frame .div_right{
-    height:87%;
-    width: 50%;
+    height:100%;
+    width: 48%;
     float: right;
     background-color: #dcfff7;
     border: 1px solid #0f0f0f;
@@ -76,6 +76,8 @@ nav a:hover{
     z-index: 9999;
     right: 0px;
     top:0px;
+    font-size: 16px;
+    border: 1px black solid;
 }
 
 .table_cluster{

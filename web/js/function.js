@@ -85,7 +85,15 @@ function DrawPoiArea() {
     var type=$("#select_type").val();//阈值
     var file="";
     if(type=="餐饮"){
-        file="restaurant";
+        file="food";
+    }if(type=="娱乐"){
+        file="rest";
+    }if(type=="购物"){
+        file="shop";
+    }if(type=="交通"){
+        file="traffic";
+    }if(type=="生活"){
+        file="life";
     }
     var InfOut = {
         "action": "DrawArea",
@@ -156,13 +164,15 @@ function DrawPoiArea() {
 function CreateTable(clusters) {
     $("#cluster_table").empty();
     $("#cluster_table").append("<tr style='height: 50px'><th class='text-center'>热点区域编号</th>" +
+        "<th class='text-center'>簇的规模</th>" +
         "<th class='text-center'>热点区域热点指数</th>" +
         "<th class='text-center'>点击查看</th>" +
         "</tr>");
-    $("#cluster_table").append("<tbody></tbody>");
+    $("#cluster_table").append("<tbody></tbody>"); 
     for(var i=0;i<10;i++){
         $("#cluster_table tbody").append("<tr>" +
             "<td>1</td>" +
+            "<td>100</td>" +
             "<td>100</td>" +
             "<td class='look'><span class='glyphicon glyphicon-search'></span></td>" +
             "</tr>");
