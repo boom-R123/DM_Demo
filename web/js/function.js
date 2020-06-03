@@ -41,13 +41,7 @@ var GreenIcon = new leafIcon({iconUrl: 'img/marker-icon-green.png'}),
     GreyIcon = new leafIcon({iconUrl: 'img/marker-icon-grey.png'}),
     YellowIcon = new leafIcon({iconUrl: 'img/marker-icon-yellow.png'});
 var Icon = [GreenIcon, RedIcon, BlueIcon, GoldIcon, OrangeIcon, VioletIcon, BlackIcon, GreyIcon, YellowIcon];
-var Lines=[
-    [[39.915168, 116.403875],[39.9, 116.4],[39.91, 116.5]],
-    [[39.915168, 116.403875],[39.8, 116.3],[39.7, 116.4]],
-    [[39.915168, 116.403875],[39.9, 116.3],[39.8, 116.4]]
-];
 var MoveMarkers=[];
-
 
 function InitMap() {
     if ($map != null) {
@@ -65,6 +59,71 @@ function InitMap() {
     L.control.scale().addTo($map);  //比例尺
 }
 
+function DrawHotPoi() {
+    var time=$("#select_time").val()//时间段
+    var t=time.toString().split(" ")[1].split(":")[0];//转换成只有开始的小时
+    var type=$("#select_type").val();//阈值
+    var file="";
+    if(type=="餐饮"){
+        file="餐饮"+"_"+t+"-"+(parseInt(t)+2)+"_"+"5";
+    }if(type=="娱乐"){
+        file="娱乐";
+    }if(type=="购物"){
+        file="购物";
+    }if(type=="交通"){
+        file="交通";
+    }if(type=="生活"){
+        file="生活";
+    }
+    var InfOut = {
+        "action": "DrawArea",
+        "file":file,//要寻找的文件
+    };
+    $.ajax({
+        type: "post",
+        url: "S1",
+        data: InfOut,
+        success: function (data) {
+            var infIn = JSON.parse(data);
+            var Data=infIn.data;
+            //console.log(infIn.data)
+            Center = [Data[0].center_lat,Data[0].center_lon];
+            InitMap();
+            var n = Data.length;//簇的个数
+            console.log(n);
+            var x = -1;//控制使用什么图标
+            for (i = 0; i < n; i++) {
+                var center=[Data[i].center_lat,Data[i].center_lon];
+                const markerS = L.marker(center, {icon: RedIcon}).addTo($map);
+                markerS.bindTooltip('热点区域<br>'+
+                    "编号:"+ Data[i].cid+"<br>"+
+                    "半径:"+ Data[i].radius.toFixed(2)+"km<br>"+
+                    "簇的规模:"+ Data[i].poi_size+"<br>"+
+                    "热点指数:"+ Data[i].flow+"<br>"
+                    ,{direction: 'left'}).openTooltip();
+                markerS.trajectory=Data[i].trajectory;
+                markerS.center=center;
+                markerS.r=Data[i].radius*1000 + 10;
+                markerS.id=Data[i].cid;
+                markerS.on("click", function () {//给中心点绑定函数，用于显示轨迹
+                    $("#btm_play").show();
+                    DrawMoveMarker(this.trajectory,this.center,this.r,this.id);
+                });
+                var circle = L.circle(center, {
+                    color: 'green', //描边色
+                    fillColor: '#f03',  //填充色
+                    fillOpacity: 0.5, //透明度
+                    radius: Data[i].radius*1000 + 10 //半径，单位米
+                }).addTo($map);
+            }
+            CreateTable(Data);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status);
+        },
+    });
+}
+
 function rad(d) {
     return d * Math.PI / 180.0;
 }
@@ -79,123 +138,52 @@ function getDistance(e1, e2){//由经纬度转换成距离（米）
     return (R * Math.acos(C));
 }
 
-function DrawPoiArea() {
-    var time=$("#select_time").val()//时间段
-    var t=time.toString().split(" ")[1].split(":")[0];//转换成只有开始的小时
-    var type=$("#select_type").val();//阈值
-    var file="";
-    if(type=="餐饮"){
-        file="food";
-    }if(type=="娱乐"){
-        file="rest";
-    }if(type=="购物"){
-        file="shop";
-    }if(type=="交通"){
-        file="traffic";
-    }if(type=="生活"){
-        file="life";
-    }
-    var InfOut = {
-        "action": "DrawArea",
-        "file":file,//要寻找的文件
-    };
-    $.ajax({
-        type: "post",
-        url: "S1",
-        data: InfOut,
-        success: function (data) {
-            var infIn = JSON.parse(data);
-            console.log(infIn)
-            Start=infIn.clusters[0].Clusters[0];
-            InitMap();
-            var Center=[0,0];//地图显示的中心点
-            var n = infIn.clusters.length;//簇的个数
-            console.log(n);
-            var x=-1;//控制使用什么图标
-            for (i = 0; i < n; i++) {
-                x++;
-                var center = [0, 0];//中心点的坐标
-                for (j = 0; j < infIn.clusters[i].Clusters.length; j++) {
-                    var point = infIn.clusters[i].Clusters[j];
-                    center[0] = center[0] + point[0];
-                    center[1] = center[1] + point[1];
-                    //var markerS = L.marker(point,{icon: Icon[x%9]}).addTo($map);//给地图添加各个点
-                }
-                console.log(x);
-                center[0] = center[0] / infIn.clusters[i].Clusters.length;
-                center[1] = center[1] / infIn.clusters[i].Clusters.length;
-                Center[0] = Center[0] + center[0];
-                Center[1] = Center[1] + center[1];
-
-                const markerS = L.marker(center,{icon: BlueIcon}).addTo($map);
-                markerS.bindTooltip('这是簇的中心点', {direction: 'left'}).openTooltip();
-
-                markerS.on("click",function () {//给中心点绑定函数，用于显示轨迹
-                    $("#btm_play").show();
-                    DrawMoveMarker();
-                });
-
-
-                var dis=0;
-                for (j = 0; j < infIn.clusters[i].Clusters.length; j++) {
-                    var point = infIn.clusters[i].Clusters[j];
-                    var temp=getDistance(center,point);
-                    if(dis<temp){
-                        dis=temp;
-                    }
-                }
-                var circle = L.circle(center, {
-                    color: 'green', //描边色
-                    fillColor: '#f03',  //填充色
-                    fillOpacity: 0.5, //透明度
-                    radius: dis+10 //半径，单位米
-                }).addTo($map);
-                //circle.bindPopup('行政地标形成的簇,规模:'+infIn.clusters[i].size).openPopup();
-            }
-            Center[0] = Center[0] / infIn.clusters.length;
-            Center[1] = Center[1] / infIn.clusters.length;
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest.status);
-        },
-    });
-}
-
-function CreateTable(clusters) {
+function CreateTable(e) {
+    //console.log(e);
     $("#cluster_table").empty();
-    $("#cluster_table").append("<tr style='height: 50px'><th class='text-center'>热点区域编号</th>" +
+    $("#cluster_table").append("<tr style='height: 50px'><th class='text-center'>编号</th>" +
         "<th class='text-center'>簇的规模</th>" +
+        "<th class='text-center'>簇的半径(km)</th>" +
         "<th class='text-center'>热点区域热点指数</th>" +
         "<th class='text-center'>点击查看</th>" +
         "</tr>");
     $("#cluster_table").append("<tbody></tbody>"); 
-    for(var i=0;i<10;i++){
+    for(var i=0;i<e.length;i++){
         $("#cluster_table tbody").append("<tr>" +
-            "<td>1</td>" +
-            "<td>100</td>" +
-            "<td>100</td>" +
+            "<td>"+e[i].cid+"</td>" +
+            "<td>"+e[i].poi_size+"</td>" +
+            "<td>"+e[i].radius.toFixed(2)+"</td>" +
+            "<td>"+e[i].flow+"</td>" +
             "<td class='look'><span class='glyphicon glyphicon-search'></span></td>" +
             "</tr>");
-        $("#cluster_table tbody tr:eq("+i+") td:eq(2)").attr("id","area"+i);
+        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].trajectory=e[i].trajectory;//不能用attr
+        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].center=[e[i].center_lat,e[i].center_lon];
+        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].r=e[i].radius*1000 + 10;
+        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].id=e[i].cid;
     }
-    $(".look").click(function () {
-        var time=$("#select_time").val()//时间段
-        var t=time.toString().split(" ")[1].split(":")[0];//转换成只有开始的小时
-        var type=$("#select_type").val();//阈值
+
+    $(".look").click(function() {
         $("#btm_play").show();
-        DrawMoveMarker();
-        alert(this.id+t+type);
+        DrawMoveMarker(this.trajectory,this.center,this.r,this.id);
     })
 }
 
-function DrawMoveMarker(e) {
+function DrawMoveMarker(e,center,r,id) {
     MoveMarkers=[];
-    Center = Lines[0][0];
+    console.log(e);
+    Center = e[0].points[0];
     InitMap();
-    for(var i=0;i<Lines.length;i++){
-        var polyline = L.polyline(Lines[i], { color: 'red' }).addTo($map);
-        console.log(Lines)
-        var marker = L.Marker.movingMarker(Lines[i],
+    var circle = L.circle(center, {
+        color: 'green', //描边色
+        fillColor: '#f03',  //填充色
+        fillOpacity: 0.5, //透明度
+        radius: r //半径，单位米
+    }).addTo($map);
+    circle.bindTooltip("编号:"+id,{direction: 'left'}).openTooltip();
+    for(var i=0;i<e.length;i++){
+        var polyline = L.polyline(e[i].points, { color: 'red' }).addTo($map);
+        //console.log(e[0].points)
+        var marker = L.Marker.movingMarker(e[i].points,
             3000, {autostart: false}).addTo($map);
         MoveMarkers.push(marker)
         marker.setIcon(MoveIcon[i%4]);

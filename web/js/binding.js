@@ -1,16 +1,14 @@
-
 function btmBindMain() {  //给按钮绑定函数
     $("#btm_ShowTrack").click(btm_ShowTrack);
     $("#btm_ReDrawMap").click(btm_ReDrawMap);
     $("#btm_play").click(btm_play);
     $("#btm_play").attr("IsMove",0);//设置一个属性用于判定是否在运行动画,0表示没有，1表示有
-    $("#select_type").change(type_change);//选择的poi类型改变
+    //$("#select_type").change(type_change);//选择的poi类型改变
 }
 
 function btm_ShowTrack(){
     $("#btm_play").hide();
-    DrawPoiArea();
-    CreateTable();
+    DrawHotPoi();
 }
 
 function btm_ReDrawMap() {
