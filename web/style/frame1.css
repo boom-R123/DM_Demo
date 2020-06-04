@@ -61,6 +61,7 @@ body {
     float: right;
     background-color: #dcfff7;
     border: 1px solid #0f0f0f;
+    overflow: auto;
 }
 
 nav li:hover{

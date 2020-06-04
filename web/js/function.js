@@ -45,7 +45,6 @@ var MoveMarkers=[];
 
 function InitMap() {
     if ($map != null) {
-        overViewZoom = $map.getZoom();
         $map.remove();
         $map = null;
     }
@@ -60,24 +59,49 @@ function InitMap() {
 }
 
 function DrawHotPoi() {
-    var time=$("#select_time").val()//时间段
+    var time=$("#select_time").val(); //时间段
     var t=time.toString().split(" ")[1].split(":")[0];//转换成只有开始的小时
     var type=$("#select_type").val();//阈值
     var file="";
-    if(type=="餐饮"){
-        file="餐饮"+"_"+t+"-"+(parseInt(t)+2)+"_"+"5";
-    }if(type=="娱乐"){
-        file="娱乐";
-    }if(type=="购物"){
-        file="购物";
-    }if(type=="交通"){
-        file="交通";
-    }if(type=="生活"){
-        file="生活";
+    if(type =="餐饮"){
+        if(t == "06") {
+            file="餐饮"+"_"+t+"-0"+(parseInt(t)+2)+"_"+"5_6";
+        }
+        else {
+            file="餐饮"+"_"+t+"-"+(parseInt(t)+2)+"_"+"5_6";
+        }
+    }if(type=="休闲娱乐"){
+        if(t == "06") {
+            file="休闲娱乐"+"_"+t+"-0"+(parseInt(t)+2)+"_"+"15_20";
+        }
+        else {
+            file="休闲娱乐"+"_"+t+"-"+(parseInt(t)+2)+"_"+"15_20";
+        }
+    }if(type =="购物"){
+        if(t == "06") {
+            file="购物"+"_"+t+"-0"+(parseInt(t)+2)+"_"+"5_10";
+        }
+        else {
+            file="购物"+"_"+t+"-"+(parseInt(t)+2)+"_"+"5_10";
+        }
+    }if(type =="交通设施"){
+        if(t == "06") {
+            file="交通设施"+"_"+t+"-0"+(parseInt(t)+2)+"_"+"15_8";
+        }
+        else {
+            file="交通设施"+"_"+t+"-"+(parseInt(t)+2)+"_"+"15_8";
+        }
+    }if(type=="生活服务"){
+        if(t == "06") {
+            file="生活服务"+"_"+t+"-0"+(parseInt(t)+2)+"_"+"5_15";
+        }
+        else {
+            file="生活服务"+"_"+t+"-"+(parseInt(t)+2)+"_"+"5_15";
+        }
     }
     var InfOut = {
         "action": "DrawArea",
-        "file":file,//要寻找的文件
+        "file":file//要寻找的文件
     };
     $.ajax({
         type: "post",
@@ -88,13 +112,14 @@ function DrawHotPoi() {
             var Data=infIn.data;
             //console.log(infIn.data)
             Center = [Data[0].center_lat,Data[0].center_lon];
+            overViewZoom=12;
             InitMap();
             var n = Data.length;//簇的个数
             console.log(n);
             var x = -1;//控制使用什么图标
             for (i = 0; i < n; i++) {
                 var center=[Data[i].center_lat,Data[i].center_lon];
-                const markerS = L.marker(center, {icon: RedIcon}).addTo($map);
+                var markerS = L.marker(center, {icon: RedIcon}).addTo($map);
                 markerS.bindTooltip('热点区域<br>'+
                     "编号:"+ Data[i].cid+"<br>"+
                     "半径:"+ Data[i].radius.toFixed(2)+"km<br>"+
@@ -145,21 +170,23 @@ function CreateTable(e) {
         "<th class='text-center'>簇的规模</th>" +
         "<th class='text-center'>簇的半径(km)</th>" +
         "<th class='text-center'>热点区域热点指数</th>" +
+        "<th class='text-center'>出租车数量</th>" +
         "<th class='text-center'>点击查看</th>" +
         "</tr>");
-    $("#cluster_table").append("<tbody></tbody>"); 
+    $("#cluster_table").append("<tbody></tbody>");
     for(var i=0;i<e.length;i++){
         $("#cluster_table tbody").append("<tr>" +
             "<td>"+e[i].cid+"</td>" +
             "<td>"+e[i].poi_size+"</td>" +
             "<td>"+e[i].radius.toFixed(2)+"</td>" +
             "<td>"+e[i].flow+"</td>" +
+            "<td>"+e[i].car_size+"</td>" +
             "<td class='look'><span class='glyphicon glyphicon-search'></span></td>" +
             "</tr>");
-        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].trajectory=e[i].trajectory;//不能用attr
-        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].center=[e[i].center_lat,e[i].center_lon];
-        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].r=e[i].radius*1000 + 10;
-        $("#cluster_table tbody tr:eq("+i+") td:eq(4)")[0].id=e[i].cid;
+        $("#cluster_table tbody tr:eq("+i+") td:eq(5)")[0].trajectory=e[i].trajectory;//不能用attr
+        $("#cluster_table tbody tr:eq("+i+") td:eq(5)")[0].center=[e[i].center_lat,e[i].center_lon];
+        $("#cluster_table tbody tr:eq("+i+") td:eq(5)")[0].r=e[i].radius*1000 + 10;
+        $("#cluster_table tbody tr:eq("+i+") td:eq(5)")[0].id=e[i].cid;
     }
 
     $(".look").click(function() {
@@ -171,7 +198,8 @@ function CreateTable(e) {
 function DrawMoveMarker(e,center,r,id) {
     MoveMarkers=[];
     console.log(e);
-    Center = e[0].points[0];
+    Center = center;
+    overViewZoom=14;
     InitMap();
     var circle = L.circle(center, {
         color: 'green', //描边色
@@ -181,10 +209,11 @@ function DrawMoveMarker(e,center,r,id) {
     }).addTo($map);
     circle.bindTooltip("编号:"+id,{direction: 'left'}).openTooltip();
     for(var i=0;i<e.length;i++){
-        var polyline = L.polyline(e[i].points, { color: 'red' }).addTo($map);
+        var polyline = L.polyline(e[i].points, { color: 'red'}).addTo($map);
+        $(".leaflet-interactive[stroke='red']").attr("stroke-width","2");
         //console.log(e[0].points)
         var marker = L.Marker.movingMarker(e[i].points,
-            3000, {autostart: false}).addTo($map);
+            5000, {autostart: false}).addTo($map);
         MoveMarkers.push(marker)
         marker.setIcon(MoveIcon[i%4]);
     }
