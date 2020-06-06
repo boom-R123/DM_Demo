@@ -11,19 +11,23 @@ var now;//现在要画的轨迹号
 var LeafIcon = L.Icon.extend({
     options: {
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        iconSize: [15, 30], // size of the icon
+        shadowSize: [15, 30], // size of the shadow
+        iconAnchor: [7.5, 30], // point of the icon which will correspond to marker's location
+        popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
     }
 });
 var leafIcon = L.Icon.extend({
     options: {
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [15, 30], // size of the icon
-        shadowSize: [15, 30], // size of the shadow
-        iconAnchor: [7.5, 30], // point of the icon which will correspond to marker's location
+        iconSize: [20, 36], // size of the icon
+        shadowSize: [20, 36], // size of the shadow
+        iconAnchor: [10, 36], // point of the icon which will correspond to marker's location
         popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+        // iconSize: [25, 41],
+        // iconAnchor: [12, 41],
+        // popupAnchor: [1, -34],
+        // shadowSize: [41, 41]
     }
 });
 var greenIcon = new LeafIcon({iconUrl: 'img/indiv_green.png'}),

@@ -25,7 +25,7 @@ function btm_play() {
         $("#btm_play").toggleClass("btn-primary");//切换class
         setTimeout("$('#btm_play').toggleClass('btn-primary');" +
             "$('#btm_play').toggleClass('btn-default');" +
-            "$('#btm_play').attr('IsMove',0)",3000)
+            "$('#btm_play').attr('IsMove',0)",5000)
     }
 }
 
